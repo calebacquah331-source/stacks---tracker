@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Text Editor</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #17365d;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            background: #17365d;
+            color: white;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #28558b;
+        }
+
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .status {
+            background: #eef3fa;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Stack Text Editor</h1>
+
+        <p>
+            Write text, save your changes, and undo previous changes.
+            This application demonstrates a stack and the
+            Last In, First Out (LIFO) principle.
+        </p>
+
+        <textarea id="editor"
+            placeholder="Type your text here..."></textarea>
+
+        <div class="buttons">
+            <button id="saveButton">Save Change</button>
+            <button id="undoButton" disabled>Undo</button>
+            <button id="clearButton">Clear Text</button>
+        </div>
+
+        <div class="status">
+            <p>
+                <strong>Stack size:</strong>
+                <span id="stackSize">0</span>
+            </p>
+            <p id="message">Enter text to get started.</p>
+        </div>
+
+        <p class="footer">Stack Data Structure Project</p>
+    </div>
+
+    <script>
+        const editor = document.getElementById("editor");
+        const saveButton = document.getElementById("saveButton");
+        const undoButton = document.getElementById("undoButton");
+        const clearButton = document.getElementById("clearButton");
+        const stackSize = document.getElementById("stackSize");
+        const message = document.getElementById("message");
+
+        let undoStack = [];
+        let savedText = "";
+
+        function updateStatus(text) {
+            stackSize.textContent = undoStack.length;
+            undoButton.disabled = undoStack.length === 0;
+            message.textContent = text;
+        }
+
+        saveButton.addEventListener("click", function () {
+            if (editor.value === savedText) {
+                updateStatus("No new changes to save.");
+                return;
+            }
+
+            undoStack.push(savedText);
+            savedText = editor.value;
+
+            updateStatus("Change saved successfully.");
+        });
+
+        undoButton.addEventListener("click", function () {
+            if (undoStack.length === 0) {
+                updateStatus("There are no changes to undo.");
+                return;
+            }
+
+            editor.value = undoStack.pop();
+            savedText = editor.value;
+
+            updateStatus("Previous text restored.");
+        });
+
+        clearButton.addEventListener("click", function () {
+            if (editor.value === "") {
+                updateStatus("The editor is already empty.");
+                return;
+            }
+
+            undoStack.push(savedText);
+            savedText = "";
+            editor.value = "";
+
+            updateStatus("Text cleared. You can undo this change.");
+        });
+    </script>
+
+</body>
+</html>
